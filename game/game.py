@@ -98,7 +98,7 @@ class SnakeGameAI:
         # 3. Check if Game Over
         reward = 0
         game_over = False
-        if self._is_collision() or self.frame_iteration > 100*len(self.snake): # So that the game ends if the AI doesn't do anything
+        if self.is_collision() or self.frame_iteration > 100*len(self.snake): # So that the game ends if the AI doesn't do anything
             game_over = True
             reward = -10
             return reward, game_over, self.score
@@ -166,7 +166,7 @@ class SnakeGameAI:
 
         self.head = Point(x, y)
 
-    def _is_collision(self, pt=None): # pt is the point we want to check for collision
+    def is_collision(self, pt=None): # pt is the point we want to check for collision
         # If it hits the border
         if pt is None:
             pt = self.head
