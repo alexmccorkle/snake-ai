@@ -158,6 +158,7 @@ def train():
         record = score
         agent.model.save()
 
+
       print(f'Game {agent.n_games}, Score: {score}, Record: {record}')  # Print the score
 
       plot_scores.append(score)  # Append the score to the plot
@@ -165,6 +166,8 @@ def train():
       mean_score = total_score / agent.n_games # Calculate the mean score
       plot_mean.append(mean_score)
       plot(plot_scores, plot_mean)
+    
+
 
 
 
