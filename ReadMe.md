@@ -6,22 +6,14 @@ Weekend shenanigans
 
 ---
 
-Will be using PyGame to make Snake (A very simple version of it) and will be using PyTorch for the Model.
+Post-Video Additions:
 
-Model will take in 11 numbers (states) and return 3 output numbers (probability of going straight, left or right)
+- Added Save/Load functionality
+  - AI continues from where you left off. Record and total score is also saved/loaded.
 
-Notes (I learn better by writing):
+## TODO
 
----
-
-Q-Learning:
-Q Value = Quality of Action 0. Init Q Value (= init model)
-
-1. Choose action (model.predict(state))
-2. Perform action
-3. Measure reward
-4. Update Q-Value (+ train model)
-   Repeat 1-4
+- Update model to prevent the spinning bad habit.
 
 ---
 
