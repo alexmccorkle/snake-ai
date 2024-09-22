@@ -17,14 +17,40 @@ class Linear_QNet(nn.Module): # Linear Neural Network for Q-Learning
 
     return x # Return the output
 
-  def save(self, file_name='model.pth'):
-    model_folder_path = './model'
-    if not os.path.exists(model_folder_path): # If the model folder doesn't exist
-      os.makedirs(model_folder_path)
+  # def save(self, file_name='model.pth'):
+  #   model_folder_path = './model'
+  #   if not os.path.exists(model_folder_path): # If the model folder doesn't exist
+  #     os.makedirs(model_folder_path)
 
-    file_name = os.path.join(model_folder_path, file_name)
-    torch.save(self.state_dict(), file_name) # Save the model's state dictionary to the file
+  #   file_name = os.path.join(model_folder_path, file_name)
+  #   torch.save(self.state_dict(), file_name) # Save the model's state dictionary to the file
 
+  def save_checkpoint(self, optimizer, n_games, record, total_score, filename="my_checkpoint.pth.tar"):
+    print("=> Saving checkpoint")
+    checkpoint = {
+        "state_dict": self.state_dict(),
+        "optimizer": optimizer.state_dict(),
+        "games_played": n_games,
+        # Other data:
+        "record": record,
+        "total_score": total_score
+    }
+    torch.save(checkpoint, filename)
+    print("=> Checkpoint saved")
+
+  def load_checkpoint(self, optimizer, filename="my_checkpoint.pth.tar"):
+    if os.path.isfile(filename) :
+      checkpoint = torch.load(filename, weights_only=True)
+      self.load_state_dict(checkpoint["state_dict"])  
+      optimizer.load_state_dict(checkpoint["optimizer"])
+      games_played = checkpoint.get("games_played", 0)
+      record = checkpoint.get("record", 0)
+      total_score = checkpoint.get("total_score", 0)
+      print("=> Checkpoint loaded")
+      return games_played, record, total_score
+    else:
+      print("=> No checkpoint found")
+      return 0, 0, 0
 class QTrainer: # Q-Learning Trainer
   def __init__(self, model, lr, gamma): # Constructor
     self.model = model # The model we are training
@@ -72,5 +98,22 @@ class QTrainer: # Q-Learning Trainer
       loss.backward() # Backpropagation, compute the gradients
       
       self.optimizer.step() # Update the weights 
+
+  def save_checkpoint(self, filename="trainer_checkpoint.pth.tar"):
+    print("=> Saving trainer checkpoint")
+    checkpoint = {
+        "optimizer": self.optimizer.state_dict()
+    }
+    torch.save(checkpoint, filename)
+    print("=> Trainer checkpoint saved")
+
+  def load_checkpoint(self, filename="trainer_checkpoint.pth.tar"):
+      if os.path.isfile(filename):
+          print("=> Loading trainer checkpoint")
+          checkpoint = torch.load(filename, weights_only=True)
+          self.optimizer.load_state_dict(checkpoint["optimizer"])
+          print("=> Trainer checkpoint loaded")
+      else:
+          print("=> No trainer checkpoint found")
 
 

@@ -1,3 +1,4 @@
+import os
 import torch
 import random
 import numpy as np
@@ -25,6 +26,7 @@ class Agent:
     self.model = Linear_QNet(11, 256, 3) # 11 input nodes, 256 hidden nodes, 3 output nodes
       # Hidden nodes ELI5: The number of nodes in the middle layer of the neural network, the more nodes the more complex patterns it can learn
     self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
+    self.optimizer = self.trainer.optimizer
 
 
   def get_state(self, game): 
@@ -115,6 +117,7 @@ class Agent:
       final_move[move] = 1 # The move with the highest prediction will be the final move
 
     return final_move
+  
 
     
 
@@ -127,6 +130,9 @@ def train():
   record = 0 # The best score
   agent = Agent()
   game = SnakeGameAI()
+
+  agent.n_games, record, total_score = agent.model.load_checkpoint(agent.optimizer)
+  agent.trainer.load_checkpoint()
   
   while True:
     # Old/Current State
@@ -156,7 +162,9 @@ def train():
 
       if score > record:
         record = score
-        agent.model.save()
+        # agent.model.save()
+        agent.model.save_checkpoint(agent.optimizer, agent.n_games, record, total_score)
+        agent.trainer.save_checkpoint()
 
 
       print(f'Game {agent.n_games}, Score: {score}, Record: {record}')  # Print the score
@@ -167,9 +175,6 @@ def train():
       plot_mean.append(mean_score)
       plot(plot_scores, plot_mean)
     
-
-
-
 
 
 if __name__ == '__main__':
