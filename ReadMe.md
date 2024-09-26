@@ -14,7 +14,7 @@ Post-Video Additions:
 ## TODO
 
 - Update model to prevent the spinning bad habit.
+- See if I can optimize the model any further to see if it can average a higher score
+  - Currently slows down around 35 points or so.
 
 ---
-
-After this I hope to do the same for other games I know of, but will try to do these without the guides for learning's sake.
