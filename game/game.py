@@ -70,6 +70,7 @@ class SnakeGameAI:
         # Place food
         self._place_food()
         self.frame_iteration = 0
+        self.last_positions = [] # List to store last few head positions so we can prevent circling
 
 
     def _place_food(self): # This is a private method or a helper method
@@ -110,6 +111,12 @@ class SnakeGameAI:
             self._place_food() # Place new food at a random location
         else: 
             self.snake.pop() # Remove the last element of the snake so that it is not growing infinitely
+        
+        if self.is_circling(): # Check that snake isn't circling too much
+            reward = -10
+
+        if self.is_trapped():
+            reward = -10
 
         # 5. Update display and clock
         self._update_ui()
@@ -175,5 +182,36 @@ class SnakeGameAI:
         # If it hits itself
         if pt in self.snake[1:] : # We don't want to check the head because it's the first element
             return True
-        
+        return False
+
+    def is_trapped(self) :
+        next_head = self._predict_next_position()
+
+        if next_head in self.snake[1:]:
+            return True
+        return False
+    
+    def _predict_next_position(self) :
+        x = self.head.x
+        y = self.head.y
+        if self.direction == Direction.RIGHT:
+            x += BLOCKSIZE
+        elif self.direction == Direction.LEFT:
+            x -= BLOCKSIZE
+        elif self.direction == Direction.UP:
+            y -= BLOCKSIZE
+        elif self.direction == Direction.DOWN:
+            y += BLOCKSIZE
+        return (x, y)
+            
+
+    def is_circling(self):
+        # Add current head position to the list
+        self.last_positions.append(self.head)
+        # Keep only last 10 positions (This can maybe be adjusted)
+        if len(self.last_positions) > 10: 
+            self.last_positions.pop(0)
+        # Check if the current head position matches any of the previous positions
+        if self.last_positions.count(self.head) > 1: # Maybe adjust this number
+            return True
         return False
